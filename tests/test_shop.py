@@ -24,12 +24,18 @@ def prices():
     "item, quantity, expected",
     [
         ("Test Item 1", 3, {"Test Item 1": 3}),
-        ("Test Item 2", 1, {"Test Item 2": 1})
+        ("Test Item 2", 1, {"Test Item 2": 1}),
+        ("Test Item 3", None, {"Test Item 3": 1})
     ]
 
 )
 def test_add_to_cart(my_shop, item, quantity, expected):
-    assert my_shop.add_to_cart(item, quantity) == expected
+    """Тестирование добавления товара"""
+    if quantity is None:
+        my_shop.add_to_cart(item)
+    else:
+        my_shop.add_to_cart(item, quantity)
+    assert my_shop.cart == expected
 
 @pytest.mark.order(1)
 @pytest.mark.parametrize(
@@ -41,10 +47,12 @@ def test_add_to_cart(my_shop, item, quantity, expected):
 
 )
 def test_add_to_cart_invalid(my_shop, item, quantity):
+    """Тестирование выброса исключения при некорректном добавлении товара"""
     with pytest.raises(ValueError):
         my_shop.add_to_cart(item, quantity)
 
 def test_calculate_total(shop_with_items, prices):
+    """Тестирование подсчета общей стоимости."""
     assert shop_with_items.calculate_total(prices) == 66
 
 @pytest.mark.parametrize(
@@ -55,6 +63,7 @@ def test_calculate_total(shop_with_items, prices):
     ],
 )
 def test_apply_discount(my_shop, total, discount, expected):
+    """Тестирование применения скидки."""
     assert my_shop.apply_discount(total, discount) == expected
 
 @pytest.mark.parametrize(
